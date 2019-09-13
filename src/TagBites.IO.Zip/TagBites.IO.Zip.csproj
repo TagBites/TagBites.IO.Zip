@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Package info -->
+  <PropertyGroup>
+    <PackageId>TagBites.IO.Zip</PackageId>
+    <Product>TagBites.IO.Zip</Product>
+    <Title>TagBites.IO.Zip</Title>
+
+    <Description></Description>
+    <PackageTags>file system;io;files;file;c#;zip;</PackageTags>
+
+    <PackageProjectUrl>https://www.tagbites.com/io</PackageProjectUrl>
+    <PackageIconUrl>https://www.tagbites.com/io/icon.png</PackageIconUrl>
+
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/TagBites/TagBites.IO.Zip.git</RepositoryUrl>
+  </PropertyGroup>
+
+  <!-- Targets -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <!-- Build -->
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootNamespace>TagBites.IO.Zip</RootNamespace>
+    <LangVersion>8</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SharpZipLib" Version="1.2.0" />
+    <PackageReference Include="TagBites.IO" Version="1.0.0-beta2" />
+  </ItemGroup>
+
+</Project>
