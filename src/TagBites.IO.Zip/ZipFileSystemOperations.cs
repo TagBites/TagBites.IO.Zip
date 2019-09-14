@@ -47,7 +47,7 @@ namespace TagBites.IO.Zip
                 File.Add(new ZipStaticDataSource(stream), file.FullName, CompressionMethod.Stored);
                 File.CommitUpdate();
             }
-            
+
             return GetFileInfo(file.FullName);
         }
         public IFileLinkInfo MoveFile(FileLink source, FileLink destination)
@@ -89,7 +89,7 @@ namespace TagBites.IO.Zip
         {
             lock (File)
             {
-               
+
             }
 
             return GetFileInfo(destination.FullName);
@@ -122,7 +122,7 @@ namespace TagBites.IO.Zip
         {
             lock (File)
             {
-             
+
             }
             return GetInfo(link.FullName);
         }

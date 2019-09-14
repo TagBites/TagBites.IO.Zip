@@ -1,8 +1,8 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
-    <InformationalVersion></InformationalVersion>
+    <InformationalVersion>1.0.0 2019-09-14</InformationalVersion>
   </PropertyGroup>
 </Project>
