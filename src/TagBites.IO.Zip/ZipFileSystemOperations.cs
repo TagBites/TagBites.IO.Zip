@@ -9,7 +9,7 @@ using TagBites.IO.Operations;
 
 namespace TagBites.IO.Zip
 {
-    internal class ZipFileSystemOperations : IFileSystemOperations, IDisposable
+    internal class ZipFileSystemOperations : IFileSystemWriteOperations, IDisposable
     {
         internal ZipFile File { get; }
 
@@ -36,10 +36,13 @@ namespace TagBites.IO.Zip
                 return entry != null ? File.GetInputStream(entry) : null;
             }
         }
-        public IFileLinkInfo WriteFile(FileLink file, Stream stream)
+        public IFileLinkInfo WriteFile(FileLink file, Stream stream, bool overwrite)
         {
             if (stream == null)
                 throw new NullReferenceException("stream");
+
+            if (!overwrite && File.GetEntry(file.FullName) != null)
+                throw new IOException("File already exists.");
 
             lock (File)
             {
@@ -50,12 +53,12 @@ namespace TagBites.IO.Zip
 
             return GetFileInfo(file.FullName);
         }
-        public IFileLinkInfo MoveFile(FileLink source, FileLink destination)
+        public IFileLinkInfo MoveFile(FileLink source, FileLink destination, bool overwrite)
         {
             lock (File)
             {
                 var stream = ReadFile(source);
-                WriteFile(destination, stream);
+                WriteFile(destination, stream, overwrite);
                 DeleteFile(source);
             }
 

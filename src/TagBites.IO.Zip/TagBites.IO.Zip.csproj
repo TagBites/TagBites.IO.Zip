@@ -34,9 +34,22 @@
     <LangVersion>8</LangVersion>
   </PropertyGroup>
 
+  <!-- References -->
+  <Choose>
+    <When Condition="'$(SolutionName)' == 'TagBites.IO'">
+      <ItemGroup>
+        <ProjectReference Include="$(SolutionDir)\src\TagBites.IO\TagBites.IO.csproj" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PackageReference Include="TagBites.IO" Version="1.1.0" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+
   <ItemGroup>
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
-    <PackageReference Include="TagBites.IO" Version="1.0.4" />
   </ItemGroup>
 
 </Project>
