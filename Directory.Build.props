@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Company>Tag Bites sp. z o.o.</Company>
     <Authors>Tag Bites sp. z o.o.</Authors>
-    <Copyright>Tag Bites sp. z o.o. © 2012-2019</Copyright>
+    <Copyright>Tag Bites sp. z o.o. © 2012-2021</Copyright>
   </PropertyGroup>
 
   <!-- Bin/Obj directories -->
@@ -32,6 +32,6 @@
 
   <!-- Includes -->
   <Import Condition="exists('Version.props')" Project="Version.props" />
-  <Import Condition="exists('Licensing.props')" Project="Licensing.props" /> 
+  <Import Condition="exists('Licensing.props')" Project="Licensing.props" />
 
 </Project>
