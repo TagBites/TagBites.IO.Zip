@@ -1,4 +1,4 @@
-name: publish
+name: publish preview
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     - "v?[0-9]+.[0-9]+.[0-9]+-preview.[0-9]+"
 
 jobs:
-  publish:
+  publish-preview:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
