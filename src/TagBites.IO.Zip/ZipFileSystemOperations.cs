@@ -4,14 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using ICSharpCode.SharpZipLib.Zip;
 using TagBites.IO.Operations;
+using TagBites.IO.Streams;
 
 namespace TagBites.IO.Zip
 {
-    internal class ZipFileSystemOperations : IFileSystemWriteOperations, IDisposable
+    internal class ZipFileSystemOperations :
+        IFileSystemWriteOperations,
+        IFileSystemDirectReadWriteOperations,
+        IDisposable
     {
-        internal ZipFile File { get; }
+        private ZipFile File { get; }
 
         public ZipFileSystemOperations(string fullName)
         {
@@ -24,18 +29,15 @@ namespace TagBites.IO.Zip
         public IFileSystemStructureLinkInfo GetLinkInfo(string fullName) => GetInfo(fullName);
         public string CorrectPath(string path) => path;
 
-        public Stream ReadFile(FileLink file)
-        {
-            return ReadFile(file.FullName);
-        }
-        private Stream ReadFile(string fullName)
+        public void ReadFile(FileLink file, Stream stream)
         {
             lock (File)
             {
-                var entry = File.GetEntry(fullName);
-                return entry != null ? File.GetInputStream(entry) : null;
+                using var entryStream = ReadFile(file.FullName);
+                entryStream.CopyTo(stream);
             }
         }
+        private Stream ReadFile(string fullName) => File.GetInputStream(File.GetEntry(fullName));
         public IFileLinkInfo WriteFile(FileLink file, Stream stream, bool overwrite)
         {
             if (stream == null)
@@ -53,11 +55,32 @@ namespace TagBites.IO.Zip
 
             return GetFileInfo(file.FullName);
         }
+
+        public FileAccess GetSupportedDirectAccess(FileLink file) => FileAccess.Read;
+        public Stream OpenFileStream(FileLink file, FileAccess access, bool overwrite)
+        {
+            if (access != FileAccess.Read)
+                throw new NotSupportedException();
+
+            Monitor.Enter(File);
+            try
+            {
+                var stream = ReadFile(file.FullName);
+
+                return new NotifyOnCloseStream(stream, () => Monitor.Exit(File));
+            }
+            catch
+            {
+                Monitor.Exit(File);
+                throw;
+            }
+        }
+
         public IFileLinkInfo MoveFile(FileLink source, FileLink destination, bool overwrite)
         {
             lock (File)
             {
-                var stream = ReadFile(source);
+                var stream = ReadFile(source.FullName);
                 WriteFile(destination, stream, overwrite);
                 DeleteFile(source);
             }
@@ -92,10 +115,11 @@ namespace TagBites.IO.Zip
         {
             lock (File)
             {
+                // TODO BJ
+                throw new NotSupportedException();
 
+                return GetFileInfo(destination.FullName);
             }
-
-            return GetFileInfo(destination.FullName);
         }
         public void DeleteDirectory(DirectoryLink directory, bool recursive)
         {
@@ -125,29 +149,16 @@ namespace TagBites.IO.Zip
         {
             lock (File)
             {
+                // TODO BJ
+                throw new NotSupportedException();
 
-            }
-            return GetInfo(link.FullName);
-        }
-
-        private ZipLinkInfo GetFileInfo(string fullName)
-        {
-            var info = GetInfo(fullName);
-            return info != null && !info.IsDirectory ? info : null;
-        }
-        private ZipLinkInfo GetDirectoryInfo(string fullName)
-        {
-            var info = GetInfo(GetDirectoryCorrectName(fullName));
-            return info != null && info.IsDirectory ? info : null;
-        }
-        private ZipLinkInfo GetInfo(string fullName)
-        {
-            //lock (Client)
-            {
-                var item = File.GetEntry(fullName);
-                return item != null ? GetInfo(fullName, item) : null;
+                return GetInfo(link.FullName);
             }
         }
+
+        private ZipLinkInfo GetFileInfo(string fullName) => GetInfo(fullName) is { IsDirectory: false } info ? info : null;
+        private ZipLinkInfo GetDirectoryInfo(string fullName) => GetInfo(GetDirectoryCorrectName(fullName)) is { IsDirectory: true } info ? info : null;
+        private ZipLinkInfo GetInfo(string fullName) => File.GetEntry(fullName) is { } item ? GetInfo(fullName, item) : null;
         private ZipLinkInfo GetInfo(string fullPath, ZipEntry line)
         {
             var item = new ZipLinkInfo(this, fullPath)
@@ -163,7 +174,7 @@ namespace TagBites.IO.Zip
 
         public void Dispose() => ((IDisposable)File).Dispose();
 
-        private string GetDirectoryCorrectName(string fullName)
+        private static string GetDirectoryCorrectName(string fullName)
         {
             return fullName[fullName.Length - 1] == Path.AltDirectorySeparatorChar
                 ? fullName
@@ -177,7 +188,7 @@ namespace TagBites.IO.Zip
 
             public string FullName { get; }
             public bool Exists => true;
-            public bool IsDirectory { get; set; }
+            public bool? IsDirectory { get; set; }
 
             public DateTime? CreationTime { get; set; }
             public DateTime? LastWriteTime { get; set; }
@@ -210,7 +221,7 @@ namespace TagBites.IO.Zip
             }
 
         }
-        static class HashHelper
+        private static class HashHelper
         {
             internal static string Md5(Stream stream)
             {
@@ -233,10 +244,8 @@ namespace TagBites.IO.Zip
         {
             private readonly Stream _stream;
 
-            public ZipStaticDataSource(Stream stream)
-            {
-                _stream = stream;
-            }
+            public ZipStaticDataSource(Stream stream) => _stream = stream;
+
 
             public Stream GetSource() => _stream;
         }
