@@ -36,7 +36,7 @@
 
   <!-- References -->
   <Choose>
-    <When Condition="'$(SolutionName)' == 'TagBites.IO'">
+    <When Condition="'$(SolutionName)' == 'TagBites.IO-dev'">
       <ItemGroup>
         <ProjectReference Include="$(SolutionDir)\src\TagBites.IO\TagBites.IO.csproj" />
       </ItemGroup>

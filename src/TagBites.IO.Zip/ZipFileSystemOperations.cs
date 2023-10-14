@@ -27,7 +27,6 @@ namespace TagBites.IO.Zip
 
 
         public IFileSystemStructureLinkInfo GetLinkInfo(string fullName) => GetInfo(fullName);
-        public string CorrectPath(string path) => path;
 
         public void ReadFile(FileLink file, Stream stream)
         {
