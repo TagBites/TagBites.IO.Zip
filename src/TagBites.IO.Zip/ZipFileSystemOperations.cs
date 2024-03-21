@@ -18,6 +18,9 @@ namespace TagBites.IO.Zip
     {
         private ZipFile File { get; }
 
+        public string Kind => "zip";
+        public string Name => File.Name;
+
         public ZipFileSystemOperations(string fullName)
         {
             File = System.IO.File.Exists(fullName)
