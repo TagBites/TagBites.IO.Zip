@@ -21,11 +21,13 @@ namespace TagBites.IO.Zip
         public string Kind => "zip";
         public string Name => File.Name;
 
-        public ZipFileSystemOperations(string fullName)
+        public ZipFileSystemOperations(string fullName, string? password = null)
         {
             File = System.IO.File.Exists(fullName)
                 ? new ZipFile(fullName)
                 : ZipFile.Create(fullName);
+
+            File.Password = password;
         }
 
 
