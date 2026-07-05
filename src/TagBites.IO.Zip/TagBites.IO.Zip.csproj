@@ -6,7 +6,7 @@
     <Product>TagBites.IO.Zip</Product>
     <Title>TagBites.IO.Zip</Title>
 
-    <Description></Description>
+    <Description>ZIP archive file system support for TagBites.IO, built on SharpZipLib. Read and write the contents of a .zip file (optionally password-protected) through the same FileSystem API used for local disk and other storages.</Description>
     <PackageTags>file;files;system;filesystem;sync;.net;C#;zip;archive</PackageTags>
 
     <PackageProjectUrl>https://www.tagbites.com/io</PackageProjectUrl>
